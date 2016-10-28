@@ -1,0 +1,86 @@
+<!picPathTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>兼容IE火狐等主流浏览器，图片上传简单JS预览</title>
+
+    <script>
+	
+	
+	
+    function checkPic(){
+        var doc=document.getElementById("doc").value;
+        var type=doc.substring(doc.lastIndexOf(".")+1,doc.length).toLowerCase();
+        if(type!="jpg"&&type!="bmp"&&type!="gif"&&type!="png"){
+            resetFile();//清空file控件内容
+            alert("请上传正确的图片格式");
+            return false;
+        }
+        document.getElementById("Preview").style.display="block";
+        return true;
+    }
+    //图片预览
+    function PreviewImage(divImage,upload,width,height) {  
+        if(checkPic()){
+            try{
+                var imgPath; 
+                //图片路径     
+                var Browser_Agent=navigator.userAgent;
+                //判断浏览器的类型   
+                if(Browser_Agent.indexOf("Firefox")!=-1){
+                    //火狐浏览器
+                    //imgPath = upload.files[0].getAsDataURL();               
+                        var file = document.getElementById('doc').files[0]; 
+                        try{ //火狐7.0以后
+						alert(1);
+                        imgPath =window.URL.createObjectURL(file);
+                        }catch (e){
+                        imgPath =file.getAsDataURL();
+                        }
+                        document.getElementById(divImage).innerHTML = "<img id='imgPreview' src='"+imgPath+"' width='"+width+"' height='"+height+"'/>";
+                }else if(Browser_Agent.indexOf("Gecko")!=-1){
+alert('c');
+                     var file = document.getElementById('doc').files[0]; 
+                        try{ //火狐7.0以后
+                        alert(1);
+                        imgPath =window.URL.createObjectURL(file);
+                        }catch (e){
+                        imgPath =file.getAsDataURL();
+                        }
+                        document.getElementById(divImage).innerHTML = "<img id='imgPreview' src='"+imgPath+"' width='"+width+"' height='"+height+"'/>";
+                }else if(Browser_Agent.indexOf("IE")!=-1){
+					alert('');
+                    var Preview = document.getElementById(divImage);
+                    Preview.filters.item("DXImageTransform.Microsoft.AlphaImageLoader").src = upload.value;
+                    Preview.style.width = width;
+                    Preview.style.height = height;
+                }
+            }catch(e){
+                resetFile();//清空file控件内容
+                alert("请上传正确的图片格式");
+            }
+        } 
+    }
+    
+    /*以下代码主要用来当用户选择了非指定类型图片时清空上传控件的值*/
+    var html=document.getElementById("resetFile").innerHTML; 
+    function resetFile(){ 
+        document.getElementById("Preview").style.display="none";//隐藏显示选中图片的层
+        document.getElementById("resetFile").innerHTML=html; //清空file控件
+    } 
+    </script>
+
+</head>
+<body>
+
+
+<div class="photo width13">
+          <p class="p1" id="Preview" style="filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale);"></p>
+            <b>
+              <span class="file1" id="resetFile"><input type="file" size="1" id="doc" value="{$goods.default_image|escape}" maxlength="0" onchange="PreviewImage('Preview',this,100,90);" hidefocus="true" ectype="change_touxiang" name="touxiang" /></span>
+              <div class="txt"><span class="bt_red">*</span>上传头像</div>
+            </b>
+        </div>
+
+   
+</body>
